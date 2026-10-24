@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATM Machine</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #141e30, #243b55);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .atm {
+            background: white;
+            width: 320px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        h1 {
+            color: #243b55;
+            margin-bottom: 10px;
+        }
+
+        .screen {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            min-height: 65px;
+        }
+
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #aaa;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            border: none;
+            border-radius: 6px;
+            background: #243b55;
+            color: white;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #41658a;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .logout {
+            background: #d32f2f;
+        }
+
+        #message {
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="atm">
+    <h1>🏧 ATM Machine</h1>
+    <p>Welcome to My Bank</p>
+
+    <!-- Login Screen -->
+    <div id="login">
+        <div class="screen">
+            <p>Enter Your 4-Digit PIN</p>
+        </div>
+
+        <input
+            type="password"
+            id="pin"
+            placeholder="Enter PIN"
+            maxlength="4"
+            inputmode="numeric"
+        >
+
+        <button onclick="login()">Login</button>
+    </div>
+
+    <!-- ATM Menu -->
+    <div id="menu" class="hidden">
+        <div class="screen">
+            <h3>ATM Dashboard</h3>
+            <p id="message">Please select an option.</p>
+        </div>
+
+        <button onclick="checkBalance()">Check Balance</button>
+
+        <input
+            type="number"
+            id="amount"
+            placeholder="Enter amount (₹)"
+            min="1"
+            step="1"
+        >
+
+        <button onclick="withdraw()">Withdraw Money</button>
+        <button onclick="deposit()">Deposit Money</button>
+        <button onclick="logout()" class="logout">Logout</button>
+    </div>
+</div>
+
+<script>
+    // Demo data only. Do not use real banking credentials.
+    const correctPIN = "1234";
+    let balance = 5000;
+
+    function login() {
+        const pin = document.getElementById("pin").value;
+
+        if (pin === correctPIN) {
+            document.getElementById("login").classList.add("hidden");
+            document.getElementById("menu").classList.remove("hidden");
+            document.getElementById("message").textContent =
+                "Login successful! Welcome.";
+        } else {
+            alert("Incorrect PIN! Please try again.");
+        }
+
+        document.getElementById("pin").value = "";
+    }
+
+    function checkBalance() {
+        document.getElementById("message").textContent =
+            "Your balance is ₹" + balance.toLocaleString("en-IN");
+    }
+
+    function getAmount() {
+        const input = document.getElementById("amount");
+        const value = input.valueAsNumber;
+
+        if (!Number.isSafeInteger(value) || value <= 0) {
+            document.getElementById("message").textContent =
+                "Please enter a valid whole amount.";
+            return null;
+        }
+
+        return value;
+    }
+
+    function withdraw() {
+        const amount = getAmount();
+
+        if (amount === null) return;
+
+        if (amount > balance) {
+            document.getElementById("message").textContent =
+                "Insufficient balance!";
+        } else {
+            balance -= amount;
+            document.getElementById("message").textContent =
+                "₹" + amount.toLocaleString("en-IN") +
+                " withdrawn successfully. Balance: ₹" +
+                balance.toLocaleString("en-IN");
+        }
+
+        document.getElementById("amount").value = "";
+    }
+
+    function deposit() {
+        const amount = getAmount();
+
+        if (amount === null) return;
+
+        if (balance + amount > Number.MAX_SAFE_INTEGER) {
+            document.getElementById("message").textContent =
+                "Amount is too large.";
+            return;
+        }
+
+        balance += amount;
+
+        document.getElementById("message").textContent =
+            "₹" + amount.toLocaleString("en-IN") +
+            " deposited successfully. Balance: ₹" +
+            balance.toLocaleString("en-IN");
+
+        document.getElementById("amount").value = "";
+    }
+
+    function logout() {
+        document.getElementById("menu").classList.add("hidden");
+        document.getElementById("login").classList.remove("hidden");
+        document.getElementById("message").textContent =
+            "You have logged out.";
+        document.getElementById("pin").value = "";
+        document.getElementById("amount").value = "";
+    }
+</script>
+
+</body>
+</html>
